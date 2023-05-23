@@ -1,0 +1,57 @@
+server:
+  port: 8080
+
+app:
+  name: Identity Provider
+  description: Keycloak Authentication and Authorization
+  version: 1
+  security:
+    enabled: true
+    realm: ${KEYCLOAK_REALM_NAME}
+    clientId: ${KEYCLOAK_CLIENT_ID}
+    secret: ${KEYCLOAK_CLIENT_SECRET}
+    auth-server-url: ${KEYCLOAK_AUTH_URL}
+    auth-url: ${KEYCLOAK_AUTH_URL}/realms/${KEYCLOAK_REALM_NAME}/protocol/openid-connect/auth
+    token-url: ${KEYCLOAK_AUTH_URL}/realms/${KEYCLOAK_REALM_NAME}/protocol/openid-connect/token
+    refresh-token-url: ${KEYCLOAK_TOKEN_URL}
+    corsOrigins: "*"
+
+spring:
+  #Specifying the Authorization Server
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          #Issuer-uri indicates the iss claims from jwt token
+          issuer-uri: ${KEYCLOAK_AUTH_URL}/realms/${KEYCLOAK_REALM_NAME}
+          jwk-set-uri: ${KEYCLOAK_AUTH_URL}/realms/${KEYCLOAK_REALM_NAME}/protocol/openid-connect/certs
+
+springdoc:
+  swagger-ui:
+    oauth:
+      clientId: myClientId
+    disable-swagger-default-url: true
+    path: /ui/swagger-ui
+    show-common-extensions: true
+    csrf:
+      enabled: true
+  api-docs:
+    path: /docs/api-docs
+
+management:
+  health:
+    db:
+      enabled: true
+    diskspace:
+      enabled: false
+    livenessstate:
+      enabled: true
+    ping:
+      enabled: false
+    readinessstate:
+      enabled: true
+    probes:
+      enabled: true
+  endpoint:
+    health:
+      showDetails: ALWAYS
